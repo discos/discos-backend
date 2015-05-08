@@ -19,7 +19,7 @@ Package contents
 
 This package implements a parser for the protocol grammar as well as a
 twisted protocol which exploits the parser. 
-The handler module also defines some simple protocol handlers which can
+The handlers module also defines some simple protocol handlers which can
 be used for testing and protocol simulation, giving at the same time a
 good starting point for other implementations.
 
@@ -31,21 +31,4 @@ necessitate to have installed the python packages *nose* and *coverage*. This
 will print to screen test results as expected while also generating xunit xml
 report in *test/results/report.xml* and a coverage html report in
 *test/coverage/index.html*.
-
-Otherwise you can always run tests with standard library python unittest::
-
-  $ cd tests
-  $ python -m unittest discover -v
-  test_good_reply_pattern_with_arguments (test_grammar.TestParsing) ... ok
-  test_good_reply_pattern_without_arguments (test_grammar.TestParsing) ... ok
-  test_good_request_pattern_with_arguments (test_grammar.TestParsing) ... ok
-  test_good_request_pattern_without_arguments (test_grammar.TestParsing) ... ok
-  test_wrong_message_name (test_grammar.TestParsing) ... ok
-  test_wrong_message_type (test_grammar.TestParsing) ... ok
-  test_wrong_reply_code (test_grammar.TestParsing) ... ok
-
-  ----------------------------------------------------------------------
-  Ran 7 tests in 0.001s
-
-  OK
 
