@@ -1,0 +1,3 @@
+#!/bin/bash
+
+nosetests -v --with-xunit --xunit-file=test/results/report.xml --with-coverage --cover-package=discosbackend --cover-erase --cover-html --cover-html-dir=test/coverage
