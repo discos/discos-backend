@@ -37,7 +37,8 @@ class Handler:
 
 class AlwaysOkHandler(Handler):
     """This is a null protocol handler, it defines the behaviour of a 
-    server which simply replies ok to every possible request.
+    server which simply replies ok to every possible request. Used only for
+    debug and testing purpose.
     """
     def handle(self, message):
         return grammar.Message(message_type = grammar.REPLY,
@@ -45,3 +46,7 @@ class AlwaysOkHandler(Handler):
                                code = grammar.OK,
                                arguments = message.arguments)
 
+class DBProtocolHandler(Handler):
+    """This is the class which defines the actual handling of message protocols
+    """
+    pass

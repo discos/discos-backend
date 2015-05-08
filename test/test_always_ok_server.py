@@ -1,5 +1,6 @@
 import unittest
-from twisted.internet import reactor
+import subprocess
+import time
 
 from discosbackend.handlers import AlwaysOkHandler
 from discosbackend.server import run_server
@@ -10,6 +11,18 @@ from simple_client import SimpleClient
 TCP_PORT = 8988
 
 class TestAlwaysOkServer(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.pid = subprocess.Popen(["python", 
+                                    "test/run_always_ok_server.py",
+                                    str(TCP_PORT)]
+                                  ).pid
+        time.sleep(1)
+
+    @classmethod
+    def tearDownClass(cls):
+        subprocess.call(["kill", "-9", str(cls.pid)])
 
     def setUp(self):
         self.client = SimpleClient(TCP_PORT)

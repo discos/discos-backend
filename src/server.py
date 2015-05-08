@@ -10,8 +10,3 @@ def run_server(port, handler):
     logger.info("Protocol handler: %s" % (str(handler.__class__)))
     reactor.listenTCP(port, DBFactory(handler = handler))
     reactor.run()
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
-    from handlers import AlwaysOkHandler
-    run_server(8988, AlwaysOkHandler())
