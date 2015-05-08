@@ -100,7 +100,7 @@ def parse_message(message):
     Parses a message. 
     @param message: the message to be parsed, if the trailing \\r\\n is present
     it will be removed
-    @return
+    @return the grammar.Message object resulting from the parsing
     @raises GrammarException if the message synthax is invalid
     """
     if message.startswith(REPLY):
