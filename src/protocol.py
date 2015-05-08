@@ -42,7 +42,7 @@ class DBProtocol(LineOnlyReceiver):
             except HandlerException, he:
                 logger.exception(he)
                 #this exceptions is some way expected
-                #we coudl differentiate the behaviour here
+                #we could differentiate the behaviour here
                 self._send_default_reply(message)
             except Exception, e:
                 #unexpected exception from the handler
@@ -54,7 +54,7 @@ class DBProtocol(LineOnlyReceiver):
                     message_type = grammar.REPLY,
                     name = request.name,
                     code = grammar.FAIL,
-                    arguments = ["Request could not be hanlded correctly"])
+                    arguments = ["Request could not be handled correctly"])
         self.sendLine(str(reply))
 
     def connectionMade(self):
@@ -70,8 +70,8 @@ class DBFactory(Factory):
 
     def __init__(self, handler):
         """
-        @param handler: an instance of the protocol handler to be used, defaults
-        to 'AlwaysOkHandler'
+        @param handler: an instance of the protocol handler to be used, should
+        be a subclass of handlers.Handler
         """
         self.handler = handler
 
