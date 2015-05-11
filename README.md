@@ -23,12 +23,24 @@ The handlers module also defines some simple protocol handlers which can
 be used for testing and protocol simulation, giving at the same time a
 good starting point for other implementations.
 
+Requirements
+~~~~~~~~~~~~
+
+**twisted** for the thersver implemntation and **astropy** now only used for
+time management, both installable via pip::
+
+  $ pip install astropy twisted
+
 Testing
 -------
 
-The package tests can be run with the provided script **run_tests** which
-necessitate to have installed the python packages *nose* and *coverage*. This
-will print to screen test results as expected while also generating xunit xml
+The package tests can be run with the provided script **run_tests** 
+depends on python modules **nose** and **coverage**::
+
+  $ pip install nose coverage
+  $./run_tests
+
+It will print to screen test results as expected while also generating xunit xml
 report in *test/results/report.xml* and a coverage html report in
 *test/coverage/index.html*.
 
