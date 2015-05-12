@@ -31,9 +31,15 @@ time management, both installable via pip:
 
 ## Using the package
 
-You can have an idea about how to integrate your own discos protocol implementation into the tcp server by looking at the **test/backend_simulator.py** module which defines a **Backend** class. If you need to define your own implementation you can just mimic its behaviour by implementing your own class which redefines all the public methods (the one which do not start with _). 
+You can have an idea about how to integrate your own discos protocol 
+implementation into the tcp server by looking at the 
+**test/backend_simulator.py** module which defines a **Backend** class. 
+If you need to define your own implementation you can just mimic its 
+behaviour by implementing your own class which redefines all the public 
+methods (the one which do not start with _). 
 
-You can run the server using your protocol definitions, just like the definition in **test/run_simulator_server.py**:
+You can run the server using your protocol definitions, just like 
+the definition in **test/run_simulator_server.py**:
 
 ```python
 from discosbackend import server
@@ -48,11 +54,17 @@ server.run_server(tcp_port,
 
 ### Testing your implementation
 
-Once you write your own implementation of the protocol you can test it just like it's done in **test/test_simulator_server.py**. You can safely reuse the tests defined in this TestCase, all you need to do is to redefine the **setUp** and **tearDown** methods to let them launch your own implementation.
+Once you write your own implementation of the protocol you can test it 
+just like it's done in **test/test_simulator_server.py**. You can safely 
+reuse the tests defined in this TestCase, all you need to do is to 
+redefine the **setUp** and **tearDown** methods to let them launch 
+your own implementation.
+
 ## Testing the package
 
-The package tests can be run with the provided script **run_tests** 
-depends on python modules **nose** and **coverage**::
+The package tests can be run with the provided script **run_tests** .
+It depends on python modules **nose** and **coverage**, both installable via
+pip:
 
 ```bash
   $ pip install nose coverage
