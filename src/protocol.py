@@ -36,25 +36,26 @@ class DBProtocol(LineOnlyReceiver):
                 reply_message = self.factory.handler.handle(message)
                 if not reply_message.is_correct_reply(message):
                     logger.debug("The handler returned an incorrect reply")
-                    self.send_default_reply(message)
+                    self.send_fail_reply(message)
                 else:
                     self.sendLine(str(reply_message))
             except HandlerException, he:
                 logger.exception(he)
-                #this exceptions is some way expected
-                #we could differentiate the behaviour here
-                self._send_default_reply(message)
+                #this exception is some way expected it happens 
+                #on every failure from the handler
+                self._send_fail_reply(message, he.message)
             except Exception, e:
                 #unexpected exception from the handler
                 logger.exception(e)
-                self._send_default_reply(message)
+                self._send_fail_reply(message)
 
-    def _send_default_reply(self, request):
+    def _send_fail_reply(self, request,
+            fail_message="Request could not be handled correctly"):
         reply = grammar.Message(
                     message_type = grammar.REPLY,
                     name = request.name,
                     code = grammar.FAIL,
-                    arguments = ["Request could not be handled correctly"])
+                                arguments = [fail_message])
         self.sendLine(str(reply))
 
     def connectionMade(self):

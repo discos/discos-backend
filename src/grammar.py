@@ -1,6 +1,15 @@
+"""This module implemetns all the necessary logics used to read and write
+correct messages according to the protocol.
+It defines regular expression for message parsing and validation, and a Message
+class used to incapsulate a protocol message within the software logics.
+Defines functions for (de)serialization of basic types into text.
+"""
+
 import re
 import logging
 logger = logging.getLogger(__name__)
+
+import time
 
 PROTOCOL_VERSION = "1.0"
 REQUEST = '?'
@@ -95,7 +104,7 @@ class Message:
                                      arguments_str)
         return return_str
         
-def parse_message(message):
+def parse_message(message_string):
     """
     Parses a message. 
     @param message: the message to be parsed, if the trailing \\r\\n is present
@@ -103,12 +112,12 @@ def parse_message(message):
     @return the grammar.Message object resulting from the parsing
     @raises GrammarException if the message synthax is invalid
     """
-    if message.startswith(REPLY):
-        match = reply_pattern.match(message)
-    elif message.startswith(REQUEST):
-        match = request_pattern.match(message)
+    if message_string.startswith(REPLY):
+        match = reply_pattern.match(message_string)
+    elif message_string.startswith(REQUEST):
+        match = request_pattern.match(message_string)
     else:
-        raise GrammarException("invalid message type '%s'" % (message[0],))
+        raise GrammarException("invalid message type '%s'" % (message_string[0],))
     if not match:
         raise GrammarException("invalid synthax")
     #TODO: validate arguments synthax and resolve the ',' issue
