@@ -153,7 +153,7 @@ class TestSimulatorServer(unittest.TestCase):
         reply = self.client.read_message()
         self.assertEqual(reply.arguments[2], "0")
 
-    def test_startand_stop__at_command(self):
+    def test_start_and_stop_at_command(self):
         start_delay = 5
         stop_delay = 10
         request = grammar.Message(message_type = grammar.REQUEST,

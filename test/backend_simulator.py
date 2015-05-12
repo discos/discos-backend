@@ -23,7 +23,7 @@ class Backend:
         #should ask the backend hardware clock
         return time.time()
 
-    def is_valid_configuration(self, configuration_name):
+    def _is_valid_configuration(self, configuration_name):
         return self._valid_conf_re.match(configuration_name)
 
     def status(self):
@@ -41,7 +41,7 @@ class Backend:
         return [self._get_time()]
 
     def set_configuration(self, conf_name):
-        if not self.is_valid_configuration(conf_name):
+        if not self._is_valid_configuration(conf_name):
             raise BackendError("invalid configuration")
         #here you should perform actual hardware configuration
         self.configuration_string = conf_name
