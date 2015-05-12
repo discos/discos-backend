@@ -13,3 +13,6 @@ class SimpleClient:
         recv = self.telnet_client.read_until('\r\n', 10)
         return grammar.parse_message(recv)
 
+    def close(self):
+        self.telnet_client.close()
+
