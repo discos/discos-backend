@@ -12,19 +12,12 @@ class Backend:
     def __init__(self):
         self.status_string = "ok"
         self.acquiring = False
-        self.waiting_for_start_time = False
-        self.startID = None
-        self.waiting_for_stop_time = False
-        self.stopID = None
         self.configuration_string = "unconfigured"
+        self._waiting_for_start_time = False
+        self._startID = None
+        self._waiting_for_stop_time = False
+        self._stopID = None
         self._valid_conf_re = re.compile("^[a-z]")
-
-    def _get_time(self):
-        #should ask the backend hardware clock
-        return time.time()
-
-    def _is_valid_configuration(self, configuration_name):
-        return self._valid_conf_re.match(configuration_name)
 
     def status(self):
         return (self._get_time(),
@@ -58,34 +51,41 @@ class Backend:
         else:
             self._stop_at(timestamp)
 
+    def _get_time(self):
+        #should ask the backend hardware clock
+        return time.time()
+
+    def _is_valid_configuration(self, configuration_name):
+        return self._valid_conf_re.match(configuration_name)
+
     def _start_at(self, timestamp):
         if timestamp < time.time():
             raise BackendError("starting time already elapsed")
-        if self.waiting_for_start_time:
-            self.startID.cancel()
-        self.waiting_for_start_time = True
-        self.startID = reactor.callLater(timestamp - time.time(),
+        if self._waiting_for_start_time:
+            self._startID.cancel()
+        self._waiting_for_start_time = True
+        self._startID = reactor.callLater(timestamp - time.time(),
                                              self._start_now)
 
     def _start_now(self):
         if self.acquiring:
             raise BackendError("already acquiring")
-        self.waiting_for_start_time = False
+        self._waiting_for_start_time = False
         self.acquiring = True
 
     def _stop_now(self):
         if not self.acquiring:
             raise BackendError("not acquiring")
-        self.waiting_for_start_time = False
-        self.waiting_for_stop_time = False
+        self._waiting_for_start_time = False
+        self._waiting_for_stop_time = False
         self.acquiring = False
 
     def _stop_at(self, timestamp):
         if timestamp < time.time():
             raise BackendError("stop time already elapsed")
-        if self.waiting_for_stop_time:
-            self.stopID.cancel()
-        self.waiting_for_stop_time = True
-        self.stopID = reactor.callLater(timestamp - time.time(),
+        if self._waiting_for_stop_time:
+            self._stopID.cancel()
+        self._waiting_for_stop_time = True
+        self._stopID = reactor.callLater(timestamp - time.time(),
                                              self._stop_now)
 
