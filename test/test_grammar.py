@@ -1,6 +1,46 @@
 import unittest
+from copy import copy
 
 from discosbackend import grammar
+
+class TestMessage(unittest.TestCase):
+    def setUp(self):
+        self.request = grammar.Message(message_type = grammar.REQUEST,
+                                       name = "req")
+        self.reply = grammar.Message(message_type = grammar.REPLY,
+                                     name = "req",
+                                     code = grammar.OK)
+    
+    def test_is_request(self):
+        self.assertTrue(self.request.is_request())
+        self.assertFalse(self.reply.is_request())
+
+    def test_is_correct_reply(self):
+        self.assertTrue(self.reply.is_correct_reply(self.request))
+        
+    def test_is_wrong_reply_name(self):
+        self.reply.name = "wrongname"
+        self.assertFalse(self.reply.is_correct_reply(self.request))
+
+    def test_is_wrong_reply_type(self):
+        self.reply.message_type = "?"
+        self.assertFalse(self.reply.is_correct_reply(self.request))
+
+    def test_check_synthax_ok(self):
+        self.assertTrue(self.reply.check_synthax())
+
+    def test_check_synthax_bad_name(self):
+        self.reply.name = "what a bad name!!"
+        self.assertFalse(self.reply.check_synthax())
+
+    def test_check_synthax_bad_message_type(self):
+        self.reply.message_type = "^"
+        self.assertFalse(self.reply.check_synthax())
+
+    def test_check_synthax_bad_message_code(self):
+        self.reply.code = "badcode"
+        self.assertFalse(self.reply.check_synthax())
+
 
 class TestParsing(unittest.TestCase):
     def test_good_request_pattern_without_arguments(self):
