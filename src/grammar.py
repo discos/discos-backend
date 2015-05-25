@@ -112,7 +112,9 @@ def parse_message(message_string):
     @return the grammar.Message object resulting from the parsing
     @raises GrammarException if the message synthax is invalid
     """
-    if message_string.startswith(REPLY):
+    if not message_string:
+        raise GrammarException("empty message is not valid")
+    elif message_string.startswith(REPLY):
         match = reply_pattern.match(message_string)
     elif message_string.startswith(REQUEST):
         match = request_pattern.match(message_string)
