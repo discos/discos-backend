@@ -5,6 +5,7 @@ from twisted.internet.protocol import Factory
 
 import grammar
 from handlers import HandlerException
+from discosbackend import __protocol_version__ as PROTOCOL_VERSION
 
 
 class DBProtocol(LineOnlyReceiver):
@@ -15,7 +16,7 @@ class DBProtocol(LineOnlyReceiver):
     correct protocol format.
     """
     def __init__(self):
-        self.protocol_version = grammar.PROTOCOL_VERSION
+        pass
 
     def lineReceived(self, line):
         logger.debug("received line: " + line)
@@ -60,9 +61,11 @@ class DBProtocol(LineOnlyReceiver):
 
     def connectionMade(self):
         logger.debug("client connected")
-        connection_message = grammar.Message(message_type = grammar.REQUEST,
-                                             name = "version")
-        connection_reply = self.factory.handler.handle(connection_message)
+        connection_reply = grammar.Message(
+                    message_type = grammar.REPLY,
+                    name = "version",
+                    code = grammar.OK,
+                    arguments = [PROTOCOL_VERSION])
         self.sendLine(str(connection_reply))
 
 

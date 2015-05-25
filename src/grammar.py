@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 import time
 
-PROTOCOL_VERSION = "1.0"
 REQUEST = '?'
 REPLY = '!'
 SEPARATOR = ','

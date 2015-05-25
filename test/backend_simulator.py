@@ -3,8 +3,6 @@ import re
 from twisted.internet import reactor
 from discosbackend.handlers import HandlerException
 
-PROTOCOL_VERSION = "1.0"
-
 class BackendError(HandlerException):
     pass
 
@@ -30,9 +28,6 @@ class Backend:
 
     def configuration(self):
         return [self.configuration_string]
-
-    def version(self):
-        return [PROTOCOL_VERSION]
 
     def time(self):
         return [self._get_time()]

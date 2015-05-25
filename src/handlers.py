@@ -3,6 +3,7 @@ logger = logging.getLogger(__name__)
 
 import grammar
 import timediscos
+from discosbackend import __protocol_version__ as PROTOCOL_VERSION
 
 class HandlerException(Exception):
     pass
@@ -87,7 +88,7 @@ class DBProtocolHandler(Handler):
         return self.backend.status()
 
     def do_version(self, args):
-        return self.backend.version()
+        return [PROTOCOL_VERSION]
 
     def do_configuration(self, args):
         return self.backend.configuration()
