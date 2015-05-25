@@ -62,7 +62,9 @@ class DBProtocol(LineOnlyReceiver):
         logger.debug("client connected")
         connection_message = grammar.Message(message_type = grammar.REQUEST,
                                              name = "version")
-        self.factory.handler.handle(connection_message)
+        connection_reply = self.factory.handler.handle(connection_message)
+        self.sendLine(str(connection_reply))
+
 
     def connectionLost(self, reason):
         logger.debug("client disconnected: " + str(reason))
