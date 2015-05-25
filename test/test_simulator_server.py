@@ -182,3 +182,73 @@ class TestSimulatorServer(unittest.TestCase):
         reply = self.client.read_message()
         self.assertEqual(reply.arguments[2], "0")
 
+    def test_set_section_command(self):
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "set-section",
+                                  arguments = ['1', '*','*','*','*','*','*'])
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.OK)
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "set-section",
+                                  arguments = ['1', '234.0',
+                                               '500.23','3','FullStokes','10','2048'])
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.OK)
+
+    def test_bad_set_section_command(self):
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "set-section",
+                                  arguments = ['ciao', '*','*','*','*','*','*'])
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "set-section",
+                                  arguments = ['1', 'wrong',
+                                               '500.23','3','FullStokes','10','2048'])
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "set-section",
+                                  arguments = ['1', '234.0',
+                                               'wrong','3','FullStokes','10','2048'])
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "set-section",
+                                  arguments = ['1', '234.0'])
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
+
+    def test_cal_on_command(self):
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "cal-on",
+                                  arguments = ['1'])
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.OK)
+        #test also default argument
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "cal-on")
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.OK)
+
+    def test_bad_cal_on_command(self):
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "cal-on",
+                                  arguments = ['wrong'])
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "cal-on",
+                                  arguments = ['-10'])
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)

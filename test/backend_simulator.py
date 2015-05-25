@@ -18,6 +18,10 @@ class Backend:
         self._waiting_for_stop_time = False
         self._stopID = None
         self._valid_conf_re = re.compile("^[a-z]")
+        self._sections = {}
+        self._max_bandwidth = 2000
+        self._max_sections = 5
+        self.interleave = 0
 
     def status(self):
         return (self._get_time(),
@@ -50,6 +54,18 @@ class Backend:
             self._stop_now()
         else:
             self._stop_at(timestamp)
+
+    def set_section(self, section, start_freq, bandwidth,
+                    feed, mode, sample_rate, bins):
+        if section > self._max_sections and not section == "*":
+            raise BackendError("backend supports %d sections" % (self._max_sections))
+        if bandwidth > self._max_bandwidth and not bandwidth == "*":
+            raise BackendError("backend maximum bandwidth is %f" % (self._max_bandwidth))
+        self._sections[section] = (start_freq, bandwidth, 
+                                  feed, mode, sample_rate, bins)
+
+    def cal_on(self, interleave):
+        self.interleave = interleave
 
     def _get_time(self):
         #should ask the backend hardware clock

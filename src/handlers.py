@@ -65,6 +65,8 @@ class DBProtocolHandler(Handler):
                     "time"             : self.do_time,
                     "start"            : self.do_start,
                     "stop"             : self.do_stop,
+                    "set-section"      : self.do_set_section,
+                    "cal-on"           : self.do_cal_on,
                    }
 
     """This is the class which defines the actual handling of message protocols
@@ -116,3 +118,42 @@ class DBProtocolHandler(Handler):
             raise HandlerException("wrong timestamp '%s'" % (args[0],))
         return self.backend.stop(timestamp.unix)
         
+    def do_set_section(self, args):
+        def _get_param(p, _type_converter=str):
+            if p == "*":
+                return p
+            else:
+                return _type_converter(p)
+
+        if len(args) < 7:
+            raise HandlerException("set-scetion needs 7 arguments")
+        try:
+            section = _get_param(args[0], int)
+            start_freq = _get_param(args[1], float)
+            bandwidth = _get_param(args[2], float)
+            feed = _get_param(args[3], int)
+            mode = _get_param(args[4])
+            sample_rate = _get_param(args[5], float)
+            bins = _get_param(args[6], int)
+        except:
+            raise HandlerException("wrong parameter format")
+        return self.backend.set_section(section,
+                                        start_freq,
+                                        bandwidth,
+                                        feed,
+                                        mode,
+                                        sample_rate,
+                                        bins)
+
+    def do_cal_on(self, args):
+        if len(args) < 1:
+            _interleave = 0
+        else:
+            try:
+                _interleave = int(args[0])
+            except:
+                raise HandlerException("interleave samples must be a positive int")
+            if _interleave < 0:
+                raise HandlerException("interleave samples must be a positive int")
+        return self.backend.cal_on(_interleave)
+
