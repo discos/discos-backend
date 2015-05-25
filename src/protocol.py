@@ -50,7 +50,7 @@ class DBProtocol(LineOnlyReceiver):
                 self._send_fail_reply(message)
 
     def _send_fail_reply(self, request,
-            fail_message="Request could not be handled correctly"):
+        fail_message="Request could not be handled correctly"):
         reply = grammar.Message(
                     message_type = grammar.REPLY,
                     name = request.name,
@@ -60,6 +60,9 @@ class DBProtocol(LineOnlyReceiver):
 
     def connectionMade(self):
         logger.debug("client connected")
+        connection_message = grammar.Message(message_type = grammar.REQUEST,
+                                             name = "version")
+        self.factory.handler.handle(connection_message)
 
     def connectionLost(self, reason):
         logger.debug("client disconnected: " + str(reason))
