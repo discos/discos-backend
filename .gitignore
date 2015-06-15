@@ -1,4 +1,5 @@
 *.pyc
+*,cover
 build
 *.swp
 .coverage
