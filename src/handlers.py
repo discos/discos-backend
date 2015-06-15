@@ -59,19 +59,18 @@ class DBProtocolHandler(Handler):
         super(DBProtocolHandler, self).__init__()
         self.backend = backend
         self.commands = {
-                    "status"           : self.do_status,
-                    "version"          : self.do_version,
-                    "configuration"    : self.do_configuration,
-                    "set-configuration": self.do_set_configuration,
-                    "time"             : self.do_time,
-                    "start"            : self.do_start,
-                    "stop"             : self.do_stop,
-                    "set-section"      : self.do_set_section,
-                    "cal-on"           : self.do_cal_on,
+                    "status"            : self.do_status,
+                    "version"           : self.do_version,
+                    "configuration"     : self.do_configuration,
+                    "set-configuration" : self.do_set_configuration,
+                    "time"              : self.do_time,
+                    "start"             : self.do_start,
+                    "stop"              : self.do_stop,
+                    "set-section"       : self.do_set_section,
+                    "cal-on"            : self.do_cal_on,
+                    "set-filename"      : self.do_set_filename,
                    }
 
-    """This is the class which defines the actual handling of message protocols
-    """
     def handle(self, message):
         reply = grammar.Message(message_type = grammar.REPLY,
                                 name = message.name)
@@ -157,4 +156,10 @@ class DBProtocolHandler(Handler):
             if _interleave < 0:
                 raise HandlerException("interleave samples must be a positive int")
         return self.backend.cal_on(_interleave)
+
+    def do_set_filename(self, args):
+        if len(args) < 1:
+            raise HandlerException("command needs <filename> as argument")
+        else:
+            return self.backend.set_filename(args[0])
 

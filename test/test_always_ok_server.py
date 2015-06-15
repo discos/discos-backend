@@ -23,9 +23,12 @@ class TestAlwaysOkServer(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         subprocess.call(["kill", "-9", str(cls.pid)])
+        pass
 
     def setUp(self):
         self.client = SimpleClient(TCP_PORT)
+        time.sleep(1)
+        self.client.read_message()
 
     def test_good_request_without_argument(self):
         request = grammar.Message(message_type = grammar.REQUEST,

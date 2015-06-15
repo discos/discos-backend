@@ -19,6 +19,7 @@ class TestSimulatorServer(unittest.TestCase):
                                   ).pid
         time.sleep(1.0)
         self.client = SimpleClient(TCP_PORT)
+        self.client.read_message()
 
     def tearDown(self):
         self.client.close()
@@ -250,5 +251,19 @@ class TestSimulatorServer(unittest.TestCase):
                                   name = "cal-on",
                                   arguments = ['-10'])
         self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
+
+    def test_set_filename_command(self):
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "set-filename",
+                                  arguments = ['newfilename'])
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.OK)
+
+    def test_bad_set_filename_command(self):
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "set-filename",
+                                  arguments = [])
         reply = self.client.read_message()
         self.assertEqual(reply.code, grammar.FAIL)

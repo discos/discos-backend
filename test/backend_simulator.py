@@ -19,6 +19,7 @@ class Backend:
         self._sections = {}
         self._max_bandwidth = 2000
         self._max_sections = 5
+        self._filename = ""
         self.interleave = 0
 
     def status(self):
@@ -61,6 +62,9 @@ class Backend:
 
     def cal_on(self, interleave):
         self.interleave = interleave
+
+    def set_filename(self, filename):
+        self._filename = filename
 
     def _get_time(self):
         #should ask the backend hardware clock
