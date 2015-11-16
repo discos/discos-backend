@@ -23,6 +23,7 @@ class TestSimulatorServer(unittest.TestCase):
 
     def tearDown(self):
         self.client.close()
+        #does not work on OSX
         subprocess.call(["kill", "-9", str(self.pid)])
 
     def test_undefined_command(self):
