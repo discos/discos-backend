@@ -10,3 +10,4 @@ def run_server(port, handler):
     logger.info("Protocol handler: %s" % (str(handler.__class__)))
     reactor.listenTCP(port, DBFactory(handler = handler))
     reactor.run()
+
