@@ -55,9 +55,9 @@ class TestSimulatorServer(unittest.TestCase):
         self.assertEqual(reply.arguments[1], grammar.OK)
         self.assertEqual(reply.arguments[2], "0")
 
-    def test_configuration_command(self):
+    def test_get_configuration_command(self):
         request = grammar.Message(message_type = grammar.REQUEST,
-                                  name = "configuration")
+                                  name = "get-configuration")
         self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.code, grammar.OK)
@@ -72,11 +72,61 @@ class TestSimulatorServer(unittest.TestCase):
         reply = self.client.read_message()
         self.assertEqual(reply.code, grammar.OK)
         request = grammar.Message(message_type = grammar.REQUEST,
-                                  name = "configuration")
+                                  name = "get-configuration")
         self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.code, grammar.OK)
         self.assertEqual(reply.arguments[0], conf_name)
+
+    def test_get_integration_command(self):
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "get-integration")
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.OK)
+        self.assertEqual(reply.arguments[0], "0")
+
+    def test_set_integration_command(self):
+        integration = 10
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "set-integration",
+                                  arguments = [integration])
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.OK)
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "get-integration")
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.OK)
+        self.assertEqual(int(reply.arguments[0]), integration)
+
+    def set_bad_integration_string_command(self):
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "set-integration",
+                                  arguments = ['ciao'])
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
+
+    def test_get_tpi_command(self):
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "get-tpi")
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.OK)
+        for tpi in map(float, reply.arguments):
+            self.assertGreaterEqual(tpi, 0)
+            self.assertLessEqual(tpi, 100)
+
+    def test_get_tp0_command(self):
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "get-tp0")
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.OK)
+        for tpi in map(float, reply.arguments):
+            self.assertEqual(tpi, 0)
 
     def test_start_now_command(self):
         request = grammar.Message(message_type = grammar.REQUEST,

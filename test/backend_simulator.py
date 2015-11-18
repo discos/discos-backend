@@ -1,4 +1,5 @@
 import time
+import random
 import re
 from twisted.internet import reactor
 from discosbackend.handlers import HandlerException
@@ -11,6 +12,7 @@ class Backend:
         self.status_string = "ok"
         self.acquiring = False
         self.configuration_string = "unconfigured"
+        self.integration = 0
         self._waiting_for_start_time = False
         self._startID = None
         self._waiting_for_stop_time = False
@@ -27,17 +29,29 @@ class Backend:
                 self.status_string, 
                 1 if self.acquiring else 0)
 
-    def configuration(self):
-        return [self.configuration_string]
+    def get_tpi(self):
+        return [random.random() * 100, random.random() * 100]
 
-    def time(self):
-        return [self._get_time()]
+    def get_tp0(self):
+        return [0, 0]
+
+    def get_configuration(self):
+        return [self.configuration_string]
 
     def set_configuration(self, conf_name):
         if not self._is_valid_configuration(conf_name):
             raise BackendError("invalid configuration")
         #here you should perform actual hardware configuration
         self.configuration_string = conf_name
+
+    def get_integration(self):
+        return [self.integration]
+
+    def set_integration(self, integration):
+        self.integration = integration
+
+    def time(self):
+        return [self._get_time()]
 
     def start(self, timestamp=None):
         if not timestamp:
