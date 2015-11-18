@@ -2,7 +2,7 @@ from distutils.core import setup
 import os
 
 setup(name = "discosbackend",
-        version = "0.5",
+        version = "1.1",
         author = "Marco Bartolini",
         author_email = "bartolini@ira.inaf.it",
         description = "reference implementation of the discos protocol for backend communication",
@@ -10,9 +10,9 @@ setup(name = "discosbackend",
         url = "https://github.com/discos/discosbackend",
         packages = ['discosbackend'],
         package_dir = {'discosbackend' : 'src',},
-        requires = ["twisted", "astropy"],
+        requires = ["twisted", "astropy", "subprocess32"],
         classifiers = [
-            "Development Status :: 4 - Beta",
+            "Development Status :: 5 - Production",
             "Environment :: Console",
             "Intended Audience :: Developers",
             "License :: OSI Approved :: GNU General Public License (GPL)",
