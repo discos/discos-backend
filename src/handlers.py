@@ -59,21 +59,21 @@ class DBProtocolHandler(Handler):
         super(DBProtocolHandler, self).__init__()
         self.backend = backend
         self.commands = {
-                    "status"                    : self.do_status,
-                    "get-tpi"                   : self.do_getTpi,
-                    "get-tp0"                   : self.do_getTp0,
-                    "version"                   : self.do_version,
-                    "get-configuration"         : self.do_get_configuration,
-                    "set-configuration"         : self.do_set_configuration,
-                    "set-integration"           : self.do_set_integration,
-                    "get-integration"           : self.do_get_integration,
-                    "time"                      : self.do_time,
-                    "start"                     : self.do_start,
-                    "stop"                      : self.do_stop,
-                    "set-section"               : self.do_set_section,
-                    "cal-on"                    : self.do_cal_on,
-                    "set-filename"              : self.do_set_filename,
-                   }
+            "status"            : self.do_status,
+            "get-tpi"           : self.do_getTpi,
+            "get-tp0"           : self.do_getTp0,
+            "version"           : self.do_version,
+            "get-configuration" : self.do_get_configuration,
+            "set-configuration" : self.do_set_configuration,
+            "set-integration"   : self.do_set_integration,
+            "get-integration"   : self.do_get_integration,
+            "time"              : self.do_time,
+            "start"             : self.do_start,
+            "stop"              : self.do_stop,
+            "set-section"       : self.do_set_section,
+            "cal-on"            : self.do_cal_on,
+            "set-filename"      : self.do_set_filename,
+       }
 
     def handle(self, message):
         logger.info("HANDLE:")
@@ -81,10 +81,10 @@ class DBProtocolHandler(Handler):
                                 name = message.name)
         if not self.commands.has_key(message.name):
             raise HandlerException("invalid command '%s'" % (message.name,))
-        logger.debug("received commandd: %s" % (message.name,))
+        logger.debug("received command: %s" % (message.name,))
         reply_arguments = self.commands[message.name](message.arguments)
         if reply_arguments:
-                    reply.arguments = map(str, reply_arguments)# ={ "lil", "lo" }
+            reply.arguments = map(str, reply_arguments)
         reply.code = grammar.OK
         return reply
 
@@ -94,26 +94,34 @@ class DBProtocolHandler(Handler):
     def do_getTpi(self, args):
         return self.backend.get_tpi()
 
+    def do_getTp0(self, args):
+        return self.backend.get_tp0()
+
     def do_version(self, args):
         return [PROTOCOL_VERSION]
 
-    def do_configuration(self, args):
-        logger.info("CONF")
-        return self.backend.configuration()
+    def do_get_configuration(self, args):
+        return self.backend.get_configuration()
 
     def do_set_configuration(self, args):
         if len(args) < 1:
             raise HandlerException("missing argument: configuration")
-        return self.backend.set_configuration(str(args[0]))  #PIPPO
+        return self.backend.set_configuration(str(args[0]))
+
+    def do_get_integration(self, args):
+        return self.backend.get_integration()
+
+    def do_set_integration(self, args):
+        if len(args) < 1:
+            raise HandlerException("missing argument: integration time")
+        try:
+            _integration = int(args[0])
+        except:
+            raise HandlerException("integration time must be an integer number")
+        return self.backend.set_integration(_integration)
 
     def do_time(self, args):
         return self.backend.time()
-
-    def do_integration(self, args):
-        if len(args) < 1:
-            raise HandlerException("missing argument: integration time")
-        return self.backend.integration(str(args[0]))
-
 
     def do_start(self, args):
         if len(args) < 1:
@@ -132,7 +140,7 @@ class DBProtocolHandler(Handler):
         except:
             raise HandlerException("wrong timestamp '%s'" % (args[0],))
         return self.backend.stop(timestamp.unix)
-        
+
     def do_set_section(self, args):
         def _get_param(p, _type_converter=str):
             if p == "*":
@@ -141,7 +149,7 @@ class DBProtocolHandler(Handler):
                 return _type_converter(p)
 
         if len(args) < 7:
-            raise HandlerException("set-scetion needs 7 arguments")
+            raise HandlerException("set-section needs 7 arguments")
         try:
             section = _get_param(args[0], int)
             start_freq = _get_param(args[1], float)
