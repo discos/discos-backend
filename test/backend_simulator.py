@@ -7,7 +7,7 @@ from discosbackend.handlers import HandlerException
 class BackendError(HandlerException):
     pass
 
-class Backend:
+class BackendSimulator(object):
     def __init__(self):
         self.status_string = "ok"
         self.acquiring = False
