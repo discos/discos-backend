@@ -59,46 +59,59 @@ class DBProtocolHandler(Handler):
         super(DBProtocolHandler, self).__init__()
         self.backend = backend
         self.commands = {
-                    "status"            : self.do_status,
-                    "version"           : self.do_version,
-                    "configuration"     : self.do_configuration,
-                    "set-configuration" : self.do_set_configuration,
-                    "time"              : self.do_time,
-                    "start"             : self.do_start,
-                    "stop"              : self.do_stop,
-                    "set-section"       : self.do_set_section,
-                    "cal-on"            : self.do_cal_on,
-                    "set-filename"      : self.do_set_filename,
+                    "status"                    : self.do_status,
+                    "get-tpi"                   : self.do_getTpi,
+                    "version"                   : self.do_version,
+                    "configuration"             : self.do_configuration,
+                    "set-configuration"         : self.do_set_configuration,
+                    "time"                      : self.do_time,
+                    "start"                     : self.do_start,
+                    "stop"                      : self.do_stop,
+                    "set-section"               : self.do_set_section,
+                    "cal-on"                    : self.do_cal_on,
+                    "set-filename"              : self.do_set_filename,
+                    "integration"               : self.do_integration
                    }
 
     def handle(self, message):
+        logger.info("HANDLE:")
         reply = grammar.Message(message_type = grammar.REPLY,
                                 name = message.name)
         if not self.commands.has_key(message.name):
             raise HandlerException("invalid command '%s'" % (message.name,))
-        logger.debug("received command: %s" % (message.name,))
+        logger.debug("received commandd: %s" % (message.name,))
         reply_arguments = self.commands[message.name](message.arguments)
         if reply_arguments:
-            reply.arguments = map(str, reply_arguments)
+                    reply.arguments = map(str, reply_arguments)# ={ "lil", "lo" }
         reply.code = grammar.OK
         return reply
 
     def do_status(self, args):
         return self.backend.status()
 
+    def do_getTpi(self, args):
+        return self.backend.get_tpi()
+
     def do_version(self, args):
         return [PROTOCOL_VERSION]
 
     def do_configuration(self, args):
+        logger.info("CONF")
         return self.backend.configuration()
 
     def do_set_configuration(self, args):
         if len(args) < 1:
             raise HandlerException("missing argument: configuration")
-        return self.backend.set_configuration(str(args[0]))
+        return self.backend.set_configuration(str(args[0]))  #PIPPO
 
     def do_time(self, args):
         return self.backend.time()
+
+    def do_integration(self, args):
+        if len(args) < 1:
+            raise HandlerException("missing argument: integration time")
+        return self.backend.integration(str(args[0]))
+
 
     def do_start(self, args):
         if len(args) < 1:

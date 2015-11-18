@@ -22,8 +22,8 @@ class TestAlwaysOkServer(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        #does not work on OSX
         subprocess.call(["kill", "-9", str(cls.pid)])
+        pass
 
     def setUp(self):
         self.client = SimpleClient(TCP_PORT)
