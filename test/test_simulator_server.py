@@ -59,6 +59,7 @@ class TestSimulatorServer(unittest.TestCase):
     def test_version_command(self):
         request = grammar.Message(message_type = grammar.REQUEST,
                                   name = "version")
+        self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.code, grammar.OK)
         self.assertEqual(reply.arguments[0], PROTOCOL_VERSION)
