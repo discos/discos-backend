@@ -102,7 +102,7 @@ class Message:
                                      self.name,
                                      arguments_str)
         return return_str
-        
+
 def parse_message(message_string):
     """
     Parses a message. 

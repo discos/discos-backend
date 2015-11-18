@@ -90,7 +90,7 @@ class TestSimulatorServer(unittest.TestCase):
         integration = 10
         request = grammar.Message(message_type = grammar.REQUEST,
                                   name = "set-integration",
-                                  arguments = [integration])
+                                  arguments = [str(integration)])
         self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.code, grammar.OK)
@@ -309,6 +309,7 @@ class TestSimulatorServer(unittest.TestCase):
         request = grammar.Message(message_type = grammar.REQUEST,
                                   name = "set-filename",
                                   arguments = ['newfilename'])
+        self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.code, grammar.OK)
 
@@ -316,5 +317,6 @@ class TestSimulatorServer(unittest.TestCase):
         request = grammar.Message(message_type = grammar.REQUEST,
                                   name = "set-filename",
                                   arguments = [])
+        self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.code, grammar.FAIL)
