@@ -1,5 +1,8 @@
+import logging
+logger = logging.getLogger(__name__)
+
 import unittest
-import subprocess
+import subprocess32 as subprocess
 import time
 
 from discosbackend.handlers import AlwaysOkHandler
@@ -14,16 +17,20 @@ class TestAlwaysOkServer(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.pid = subprocess.Popen(["python", 
+        cls._server = subprocess.Popen(["python", 
                                     "test/run_always_ok_server.py",
                                     str(TCP_PORT)]
-                                  ).pid
+                                  )
+        logger.info("SERVER LISTENING PID %d" % (cls._server.pid,))
         time.sleep(1)
 
     @classmethod
     def tearDownClass(cls):
-        subprocess.call(["kill", "-9", str(cls.pid)])
-        pass
+        #does not work on OSX
+        #subprocess.call(["kill", "-9", str(cls.pid)])
+        logger.info("KILLING SERVER PID %d" % (cls._server.pid,))
+        cls._server.terminate()
+        time.sleep(1)
 
     def setUp(self):
         self.client = SimpleClient(TCP_PORT)

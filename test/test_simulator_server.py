@@ -1,5 +1,5 @@
 import unittest
-import subprocess
+import subprocess32 as subprocess
 import time
 
 from discosbackend.handlers import AlwaysOkHandler
