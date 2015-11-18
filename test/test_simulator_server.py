@@ -5,6 +5,7 @@ import time
 from discosbackend.handlers import AlwaysOkHandler
 from discosbackend.server import run_server
 from discosbackend import grammar
+from discosbackend import __protocol_version__ as PROTOCOL_VERSION
 
 from simple_client import SimpleClient
 
@@ -54,6 +55,13 @@ class TestSimulatorServer(unittest.TestCase):
                                delta = 0.5)
         self.assertEqual(reply.arguments[1], grammar.OK)
         self.assertEqual(reply.arguments[2], "0")
+
+    def test_version_command(self):
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "version")
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.OK)
+        self.assertEqual(reply.arguments[0], PROTOCOL_VERSION)
 
     def test_get_configuration_command(self):
         request = grammar.Message(message_type = grammar.REQUEST,
