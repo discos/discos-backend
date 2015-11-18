@@ -61,16 +61,18 @@ class DBProtocolHandler(Handler):
         self.commands = {
                     "status"                    : self.do_status,
                     "get-tpi"                   : self.do_getTpi,
+                    "get-tp0"                   : self.do_getTp0,
                     "version"                   : self.do_version,
-                    "configuration"             : self.do_configuration,
+                    "get-configuration"         : self.do_get_configuration,
                     "set-configuration"         : self.do_set_configuration,
+                    "set-integration"           : self.do_set_integration,
+                    "get-integration"           : self.do_get_integration,
                     "time"                      : self.do_time,
                     "start"                     : self.do_start,
                     "stop"                      : self.do_stop,
                     "set-section"               : self.do_set_section,
                     "cal-on"                    : self.do_cal_on,
                     "set-filename"              : self.do_set_filename,
-                    "integration"               : self.do_integration
                    }
 
     def handle(self, message):
