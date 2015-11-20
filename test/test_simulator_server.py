@@ -224,13 +224,15 @@ class TestSimulatorServer(unittest.TestCase):
         stop_delay = 10
         request = grammar.Message(message_type = grammar.REQUEST,
                                   name = "start",
-                                  arguments = [time_to_string(time.time() + delay)])
+                                  arguments = [time_to_string(time.time() + \
+                                      start_delay)])
         self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.code, grammar.OK)
         request = grammar.Message(message_type = grammar.REQUEST,
                                   name = "stop",
-                                  arguments = [time_to_string(time.time() + delay)])
+                                  arguments = [time_to_string(time.time() + \
+                                          stop_delay)])
         self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.code, grammar.OK)
