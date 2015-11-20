@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from astropy.time import TimeUnix, Time
 import astropy._erfa as erfa
+import time
 
 CENTINANOSECONDS = 10000000
 
@@ -25,4 +26,9 @@ def parse_unix_time(unix_timestamp_string):
                 scale = 'utc',
                 precision = 7)
 
+def get_acs_now():
+    return Time(time.time() * CENTINANOSECONDS, format="discos")
+
+def unix_to_acs_time(unix_timestamp):
+    return Time(unix_timestamp * CENTINANOSECONDS, format="discos")
 

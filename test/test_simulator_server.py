@@ -6,10 +6,15 @@ from discosbackend.handlers import AlwaysOkHandler
 from discosbackend.server import run_server
 from discosbackend import grammar
 from discosbackend import __protocol_version__ as PROTOCOL_VERSION
+from discosbackend.timediscos import get_acs_now, unix_to_acs_time
 
 from simple_client import SimpleClient
 
 TCP_PORT = 8988
+
+def time_to_string(unix_time):
+    discos_time = unix_to_acs_time(unix_time)
+    return str("%.f" % discos_time.discos)
 
 class TestSimulatorServer(unittest.TestCase):
 
@@ -177,7 +182,7 @@ class TestSimulatorServer(unittest.TestCase):
         delay = 5
         request = grammar.Message(message_type = grammar.REQUEST,
                                   name = "start",
-                                  arguments = [str(time.time() + delay)])
+                                  arguments = [time_to_string(time.time() + delay)])
         self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.code, grammar.OK)
@@ -200,7 +205,7 @@ class TestSimulatorServer(unittest.TestCase):
         self.assertEqual(reply.code, grammar.OK)
         request = grammar.Message(message_type = grammar.REQUEST,
                                   name = "stop",
-                                  arguments = [str(time.time() + delay)])
+                                  arguments = [time_to_string(time.time() + delay)])
         self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.code, grammar.OK)
@@ -219,13 +224,13 @@ class TestSimulatorServer(unittest.TestCase):
         stop_delay = 10
         request = grammar.Message(message_type = grammar.REQUEST,
                                   name = "start",
-                                  arguments = [str(time.time() + start_delay)])
+                                  arguments = [time_to_string(time.time() + delay)])
         self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.code, grammar.OK)
         request = grammar.Message(message_type = grammar.REQUEST,
                                   name = "stop",
-                                  arguments = [str(time.time() + stop_delay)])
+                                  arguments = [time_to_string(time.time() + delay)])
         self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.code, grammar.OK)
