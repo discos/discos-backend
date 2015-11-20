@@ -2,8 +2,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 import grammar
-import timediscos
 from discosbackend import __protocol_version__ as PROTOCOL_VERSION
+from discosbackend import timediscos
+from astropy.time import Time
 
 class HandlerException(Exception):
     pass
@@ -127,19 +128,19 @@ class DBProtocolHandler(Handler):
         if len(args) < 1:
             return self.backend.start()
         try:
-            timestamp = timediscos.parse_unix_time(args[0])
+            timestamp = Time(int(args[0]), format="discos")
         except:
             raise HandlerException("wrong timestamp '%s'" % (args[0],))
-        return self.backend.start(timestamp.unix)
+        return self.backend.start(timestamp)
 
     def do_stop(self, args):
         if len(args) < 1:
             return self.backend.stop()
         try:
-            timestamp = timediscos.parse_unix_time(args[0])
+            timestamp = Time(int(args[0]), format="discos")
         except:
             raise HandlerException("wrong timestamp '%s'" % (args[0],))
-        return self.backend.stop(timestamp.unix)
+        return self.backend.stop(timestamp)
 
     def do_set_section(self, args):
         def _get_param(p, _type_converter=str):

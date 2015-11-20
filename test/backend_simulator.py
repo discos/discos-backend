@@ -57,13 +57,13 @@ class BackendSimulator(object):
         if not timestamp:
             self._start_now()
         else:
-            self._start_at(timestamp)
+            self._start_at(timestamp.unix)
 
     def stop(self, timestamp=None):
         if not timestamp:
             self._stop_now()
         else:
-            self._stop_at(timestamp)
+            self._stop_at(timestamp.unix)
 
     def set_section(self, section, start_freq, bandwidth,
                     feed, mode, sample_rate, bins):
