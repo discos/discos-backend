@@ -15,11 +15,14 @@ good starting point for other implementations.
 
 ## Requirements
 
-**twisted** for the thersver implemntation and **astropy** now only used for
-time management, both installable via pip:
+  * **twisted** for the the server implemntation 
+  * **astropy** for time management
+  * **nose** **subprocess32** and **coverage** are used for test execution
+
+Dependencies can be installed via pip:
 
 ```bash
-  $ pip install astropy twisted
+  $ pip install -r requirements.txt
 ```
 
 # Using the package
@@ -56,15 +59,13 @@ your own implementation.
 # Testing the package
 
 The package tests can be run with the provided script **run_tests** .
-It depends on python modules **nose** and **coverage**, both installable via
-pip:
 
 ```bash
-  $ pip install nose coverage
   $./run_tests
 ```
 
 It will print to screen test results as expected while also generating xunit xml
 report in *test/results/report.xml* and a coverage html report in
 *test/coverage/index.html*.
+
 
