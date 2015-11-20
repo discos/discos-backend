@@ -22,7 +22,7 @@ class TestAlwaysOkServer(unittest.TestCase):
                                     str(TCP_PORT)]
                                   )
         logger.info("SERVER LISTENING PID %d" % (cls._server.pid,))
-        time.sleep(1)
+        time.sleep(3)
 
     @classmethod
     def tearDownClass(cls):
@@ -30,7 +30,7 @@ class TestAlwaysOkServer(unittest.TestCase):
         #subprocess.call(["kill", "-9", str(cls.pid)])
         logger.info("KILLING SERVER PID %d" % (cls._server.pid,))
         cls._server.terminate()
-        time.sleep(1)
+        time.sleep(3)
 
     def setUp(self):
         self.client = SimpleClient(TCP_PORT)

@@ -1,6 +1,8 @@
 import unittest
 import subprocess32 as subprocess
 import time
+import logging
+logger=logging.getLogger(__name__)
 
 from discosbackend.handlers import AlwaysOkHandler
 from discosbackend.server import run_server
@@ -19,24 +21,27 @@ def time_to_string(unix_time):
 class TestSimulatorServer(unittest.TestCase):
 
     def setUp(self):
-        self.pid = subprocess.Popen(["python", 
+        self._server = subprocess.Popen(["python", 
                                     "test/run_simulator_server.py",
                                     str(TCP_PORT)]
-                                  ).pid
-        time.sleep(1.0)
+                                  )
+        logger.info("SERVER LISTENING PID %d" % (self._server.pid,))
+        time.sleep(3)
         self.client = SimpleClient(TCP_PORT)
         self.client.read_message()
 
     def tearDown(self):
         self.client.close()
-        #does not work on OSX
-        subprocess.call(["kill", "-9", str(self.pid)])
+        self._server.terminate()
+        time.sleep(1)
 
     def test_undefined_command(self):
         request = grammar.Message(message_type = grammar.REQUEST,
                                   name = "badcommand")
+        logger.debug(request)
         self.client.send_message(request)
         reply = self.client.read_message()
+        logger.debug(reply)
         self.assertEqual(reply.code, grammar.FAIL)
 
     def test_time_command(self):
