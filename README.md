@@ -1,3 +1,6 @@
+
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.34127.svg)](http://dx.doi.org/10.5281/zenodo.34127)
+
 # DISCOS BACKEND
 
 This package defines a reference implementation for the protocol used by
