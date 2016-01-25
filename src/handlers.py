@@ -92,6 +92,7 @@ class DBProtocolHandler(Handler):
             "set-section"       : self.do_set_section,
             "cal-on"            : self.do_cal_on,
             "set-filename"      : self.do_set_filename,
+            #new in version 1.2
             "convert-data"      : self.do_convert_data,
        }
 
@@ -207,5 +208,8 @@ class DBProtocolHandler(Handler):
             return self.backend.set_filename(args[0])
 
     def do_convert_data(self, args):
+        """
+        Added in version 1.2
+        """
         return self.backend.convert_data()
 
