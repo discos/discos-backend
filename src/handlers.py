@@ -92,6 +92,7 @@ class DBProtocolHandler(Handler):
             "set-section"       : self.do_set_section,
             "cal-on"            : self.do_cal_on,
             "set-filename"      : self.do_set_filename,
+            "convert-data"      : self.do_convert_data,
        }
 
     def handle(self, message):
@@ -204,4 +205,7 @@ class DBProtocolHandler(Handler):
             raise HandlerException("command needs <filename> as argument")
         else:
             return self.backend.set_filename(args[0])
+
+    def do_convert_data(self, args):
+        return self.backend.convert_data()
 
