@@ -98,6 +98,9 @@ class BackendSimulator(object):
     def set_filename(self, filename):
         self._filename = filename
 
+    def convert_data(self):
+        pass
+
     def _get_time(self):
         #should ask the backend hardware clock
         return time.time()
