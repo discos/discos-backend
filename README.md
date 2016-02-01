@@ -1,5 +1,7 @@
 
 [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.34127.svg)](http://dx.doi.org/10.5281/zenodo.34127)
+[![astropy](http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat)](http://www.astropy.org/)
+[![Build Status](https://travis-ci.org/discos/discos-backend.svg?branch=master)](https://travis-ci.org/discos/discos-backend)
 
 # DISCOS BACKEND
 
