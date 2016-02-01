@@ -21,6 +21,7 @@ from copy import copy
 
 from discosbackend import grammar
 
+
 class TestMessage(unittest.TestCase):
     def setUp(self):
         self.request = grammar.Message(message_type = grammar.REQUEST,
