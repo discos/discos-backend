@@ -94,6 +94,8 @@ class DBProtocolHandler(Handler):
             "set-filename"      : self.do_set_filename,
             #new in version 1.2
             "convert-data"      : self.do_convert_data,
+            #new in version 1.3
+            "set-enable"        : self.do_set_enable
        }
 
     def handle(self, message):
@@ -212,4 +214,17 @@ class DBProtocolHandler(Handler):
         Added in version 1.2
         """
         return self.backend.convert_data()
+
+    def do_set_enable(self, args):
+        """
+        Added in version 1.3
+        """
+        if len(args) < 2:
+            raise HandlerException("set-enable needs 2 arguments")
+        try:
+            _feed1 = int(args[0])
+            _feed2 = int(args[1])
+        except ValueError:
+            raise HandlerException("wrong parameter format")
+        return self.backend.set_enable(_feed1, _feed2)
 
