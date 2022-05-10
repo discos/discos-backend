@@ -359,3 +359,42 @@ class TestSimulatorServer(unittest.TestCase):
         self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.code, grammar.FAIL)
+
+    def test_set_enable_command(self):
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "set-enable",
+                                  arguments = ['0', '1'])
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.OK)
+
+    def test_set_enable_less_than_2_feeds(self):
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "set-enable")
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
+
+    def test_set_enable_wrong_parameter_type(self):
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "set-enable",
+                                  arguments = ['foo', 'bar'])
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
+
+    def test_set_enable_feeds_out_of_range(self):
+        # Feed 1 out of range
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "set-enable",
+                                  arguments = ['4', '1'])
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
+        # Feed 2 out of range
+        request = grammar.Message(message_type = grammar.REQUEST,
+                                  name = "set-enable",
+                                  arguments = ['0', '2'])
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)

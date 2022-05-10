@@ -20,7 +20,7 @@ from distutils.core import setup
 import os
 
 setup(name = "discosbackend",
-        version = "1.2",
+        version = "1.3",
         author = "Marco Bartolini",
         author_email = "bartolini@ira.inaf.it",
         description = "reference implementation of the discos protocol for backend communication",

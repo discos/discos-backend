@@ -41,6 +41,7 @@ class BackendSimulator(object):
         self._max_sections = 5
         self._filename = ""
         self.interleave = 0
+        self.current_sections = range(0, self._max_sections)
 
     def status(self):
         return (self._get_time(),
@@ -100,6 +101,18 @@ class BackendSimulator(object):
 
     def convert_data(self):
         pass
+
+    def set_enable(self, feed1, feed2):
+        if feed1 not in range(self._max_sections / 2):
+            raise BackendError("feed1 out of range")
+        if feed2 not in range(self._max_sections / 2):
+            raise BackendError("feed2 out of range")
+        self.current_sections = [
+            feed1*2,
+            feed1*2 + 1,
+            feed2*2,
+            feed2*2 + 1
+        ]
 
     def _get_time(self):
         #should ask the backend hardware clock
