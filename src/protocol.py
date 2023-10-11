@@ -1,5 +1,3 @@
-
-#
 #
 #   Copyright 2015 Marco Bartolini, bartolini@ira.inaf.it
 #
@@ -17,78 +15,85 @@
 #
 
 import logging
-logger = logging.getLogger(__name__)
 from twisted.protocols.basic import LineOnlyReceiver
 from twisted.internet.protocol import Factory
 
-import grammar
-from handlers import HandlerException
-from discosbackend import __protocol_version__ as PROTOCOL_VERSION
+from discosbackend import grammar
+from discosbackend.handlers import HandlerException
+from discosbackend import __protocol_version__
+logger = logging.getLogger(__name__)
 
 
 class DBProtocol(LineOnlyReceiver):
     """
-    This class defines the DBProtocol. Its duty is to control protocol consistency
-    and correctness and to pass correct messages to a protocol handler which return
-    reply messages which this class will forward to the request sender in the
-    correct protocol format.
+    This class defines the DBProtocol. Its duty is to control protocol
+    consistency and correctness and to pass correct messages to a protocol
+    handler which return reply messages which this class will forward to the
+    request sender in the correct protocol format.
     """
     def __init__(self):
         pass
 
     def lineReceived(self, line):
-        logger.debug("received line: " + line)
+        logger.debug("received line: %s", line.decode())
+        line = line.decode("raw_unicode_escape")
         try:
             message = grammar.parse_message(line)
             logger.debug("message successfully parsed")
-        except grammar.GrammarException, ge:
-            logger.debug("synthax error: %s" % (ge.message,))
-            reply_message = grammar.Message(message_type = grammar.REPLY,
-                                    name = "undefined",
-                                    code = grammar.INVALID,
-                                    arguments = ["synthax error: %s" %
-                                                 (ge.message,)])
-            self.sendLine(str(reply_message))
+        except grammar.GrammarException as ge:
+            logger.debug("synthax error: %s", str(ge))
+            reply_message = grammar.Message(
+                message_type=grammar.REPLY,
+                name="undefined",
+                code=grammar.INVALID,
+                arguments=["synthax error: {str(ge)}"]
+            )
+            self.sendLine(str(reply_message).encode('raw_unicode_escape'))
             return
-        if message.is_request(): #we only process requests
+        if message.is_request():  # we only process requests
             try:
                 reply_message = self.factory.handler.handle(message)
                 if not reply_message.is_correct_reply(message):
                     logger.debug("The handler returned an incorrect reply")
-                    self.send_fail_reply(message)
+                    self._send_fail_reply(message)
                 else:
-                    self.sendLine(str(reply_message))
-            except HandlerException, he:
+                    self.sendLine(
+                        str(reply_message).encode('raw_unicode_escape')
+                    )
+            except HandlerException as he:
                 logger.exception(he)
-                #this exception is some way expected it happens 
-                #on every failure from the handler
-                self._send_fail_reply(message, he.message)
-            except Exception, e:
-                #unexpected exception from the handler
+                # this exception is some way expected it happens
+                # on every failure from the handler
+                self._send_fail_reply(message, str(he))
+            except Exception as e:
+                # unexpected exception from the handler
                 logger.exception(e)
                 self._send_fail_reply(message)
 
-    def _send_fail_reply(self, request,
-        fail_message="Request could not be handled correctly"):
+    def _send_fail_reply(
+            self,
+            request,
+            fail_message="Request could not be handled correctly"):
         reply = grammar.Message(
-                    message_type = grammar.REPLY,
-                    name = request.name,
-                    code = grammar.FAIL,
-                                arguments = [fail_message])
-        self.sendLine(str(reply))
+            message_type=grammar.REPLY,
+            name=request.name,
+            code=grammar.FAIL,
+            arguments=[fail_message]
+        )
+        self.sendLine(str(reply).encode("raw_unicode_escape"))
 
     def connectionMade(self):
         logger.debug("client connected")
         connection_reply = grammar.Message(
-                    message_type = grammar.REPLY,
-                    name = "version",
-                    code = grammar.OK,
-                    arguments = [PROTOCOL_VERSION])
-        self.sendLine(str(connection_reply))
+            message_type=grammar.REPLY,
+            name="version",
+            code=grammar.OK,
+            arguments=[__protocol_version__]
+        )
+        self.sendLine(str(connection_reply).encode("raw_unicode_escape"))
 
-
-    def connectionLost(self, reason):
-        logger.debug("client disconnected: " + str(reason))
+    def connectionLost(self, reason=None):
+        logger.debug("client disconnected: %s", str(reason))
 
 
 class DBFactory(Factory):
@@ -107,4 +112,3 @@ class DBFactory(Factory):
 
     def stopFactory(self):
         self.handler.stop()
-

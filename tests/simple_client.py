@@ -1,5 +1,3 @@
-
-#
 #
 #   Copyright 2015 Marco Bartolini, bartolini@ira.inaf.it
 #
@@ -16,15 +14,23 @@
 #   limitations under the License.
 #
 
-import logging 
-import sys
+import telnetlib
 
-from discosbackend import server
-from discosbackend.handlers import DBProtocolHandler
+from discosbackend import grammar
 
-from backend_simulator import BackendSimulator
 
-logging.basicConfig(level=logging.DEBUG)
-server.run_server(int(sys.argv[1]),
-                  DBProtocolHandler(BackendSimulator()))
+class SimpleClient:
+    def __init__(self, port):
+        self.telnet_client = telnetlib.Telnet("localhost", port)
 
+    def send_message(self, message):
+        self.telnet_client.write(
+            (str(message) + '\r\n').encode('raw_unicode_escape')
+        )
+
+    def read_message(self):
+        recv = self.telnet_client.read_until(b'\r\n', 10)
+        return grammar.parse_message(recv.decode())
+
+    def close(self):
+        self.telnet_client.close()

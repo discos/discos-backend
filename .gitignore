@@ -1,5 +1,9 @@
+build/
+dist/
+htmlcov/
 *.pyc
+*.egg-info/
 *,cover
-build
 *.swp
-.coverage
+.coverage*
+.python-version

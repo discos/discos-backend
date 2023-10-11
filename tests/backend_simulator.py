@@ -22,10 +22,12 @@ import re
 from twisted.internet import reactor
 from discosbackend.handlers import HandlerException
 
+
 class BackendError(HandlerException):
     pass
 
-class BackendSimulator(object):
+
+class BackendSimulator:
     def __init__(self):
         self.status_string = "ok"
         self.acquiring = False
@@ -44,9 +46,11 @@ class BackendSimulator(object):
         self.current_sections = range(0, self._max_sections)
 
     def status(self):
-        return (self._get_time(),
-                self.status_string, 
-                1 if self.acquiring else 0)
+        return (
+            self._get_time(),
+            self.status_string,
+            1 if self.acquiring else 0
+        )
 
     def get_tpi(self):
         return [random.random() * 100, random.random() * 100]
@@ -60,7 +64,7 @@ class BackendSimulator(object):
     def set_configuration(self, conf_name):
         if not self._is_valid_configuration(conf_name):
             raise BackendError("invalid configuration")
-        #here you should perform actual hardware configuration
+        # here you should perform actual hardware configuration
         self.configuration_string = conf_name
 
     def get_integration(self):
@@ -84,14 +88,31 @@ class BackendSimulator(object):
         else:
             self._stop_at(timestamp.unix)
 
-    def set_section(self, section, start_freq, bandwidth,
-                    feed, mode, sample_rate, bins):
+    def set_section(
+            self,
+            section,
+            start_freq,
+            bandwidth,
+            feed,
+            mode,
+            sample_rate,
+            bins):
         if section > self._max_sections and not section == "*":
-            raise BackendError("backend supports %d sections" % (self._max_sections))
-        if bandwidth > self._max_bandwidth and not bandwidth == "*":
-            raise BackendError("backend maximum bandwidth is %f" % (self._max_bandwidth))
-        self._sections[section] = (start_freq, bandwidth, 
-                                  feed, mode, sample_rate, bins)
+            raise BackendError(
+                f"backend supports {self._max_sections} sections"
+            )
+        if not bandwidth == "*" and int(bandwidth) > self._max_bandwidth:
+            raise BackendError(
+                f"backend maximum bandwidth is {self._max_bandwidth}"
+            )
+        self._sections[section] = (
+            start_freq,
+            bandwidth,
+            feed,
+            mode,
+            sample_rate,
+            bins
+        )
 
     def cal_on(self, interleave):
         self.interleave = interleave
@@ -103,19 +124,19 @@ class BackendSimulator(object):
         pass
 
     def set_enable(self, feed1, feed2):
-        if feed1 not in range(self._max_sections / 2):
+        if feed1 not in range(int(self._max_sections / 2)):
             raise BackendError("feed1 out of range")
-        if feed2 not in range(self._max_sections / 2):
+        if feed2 not in range(int(self._max_sections / 2)):
             raise BackendError("feed2 out of range")
         self.current_sections = [
-            feed1*2,
-            feed1*2 + 1,
-            feed2*2,
-            feed2*2 + 1
+            feed1 * 2,
+            feed1 * 2 + 1,
+            feed2 * 2,
+            feed2 * 2 + 1
         ]
 
     def _get_time(self):
-        #should ask the backend hardware clock
+        # should ask the backend hardware clock
         return time.time()
 
     def _is_valid_configuration(self, configuration_name):
@@ -127,8 +148,10 @@ class BackendSimulator(object):
         if self._waiting_for_start_time:
             self._startID.cancel()
         self._waiting_for_start_time = True
-        self._startID = reactor.callLater(timestamp - time.time(),
-                                             self._start_now)
+        self._startID = reactor.callLater(
+            timestamp - time.time(),
+            self._start_now
+        )
 
     def _start_now(self):
         if self.acquiring:
@@ -149,6 +172,7 @@ class BackendSimulator(object):
         if self._waiting_for_stop_time:
             self._stopID.cancel()
         self._waiting_for_stop_time = True
-        self._stopID = reactor.callLater(timestamp - time.time(),
-                                             self._stop_now)
-
+        self._stopID = reactor.callLater(
+            timestamp - time.time(),
+            self._stop_now
+        )

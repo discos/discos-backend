@@ -1,5 +1,3 @@
-
-#
 #
 #   Copyright 2015 Marco Bartolini, bartolini@ira.inaf.it
 #
@@ -17,17 +15,17 @@
 #
 
 import logging
+from discosbackend import grammar
+from discosbackend import __protocol_version__
+from astropy.time import Time
 logger = logging.getLogger(__name__)
 
-import grammar
-from discosbackend import __protocol_version__ as PROTOCOL_VERSION
-from discosbackend import timediscos
-from astropy.time import Time
 
 class HandlerException(Exception):
     pass
 
-class Handler(object):
+
+class Handler:
     """Base class for defining protocol handlers
     """
     def handle(self, message):
@@ -44,28 +42,54 @@ class Handler(object):
         went wrong we can use this exception that will be managed by the server
         in a clean way.
         """
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     def start(self):
         """Called upon protocol initialization
         """
-        logger.debug("%s started" % self.__class__)
+        logger.debug("%s started", self.__class__)
 
     def stop(self):
         """Called before shutting down the server
         """
-        logger.debug("%s stopped" % self.__class__)
+        logger.debug("%s stopped", self.__class__)
+
 
 class AlwaysOkHandler(Handler):
-    """This is a null protocol handler, it defines the behaviour of a 
+    """This is a null protocol handler, it defines the behaviour of a
     server which simply replies ok to every possible request. Used only for
     debug and testing purpose.
     """
     def handle(self, message):
-        return grammar.Message(message_type = grammar.REPLY,
-                               name = message.name,
-                               code = grammar.OK,
-                               arguments = message.arguments)
+        return grammar.Message(
+            message_type=grammar.REPLY,
+            name=message.name,
+            code=grammar.OK,
+            arguments=message.arguments
+        )
+
+
+class AlwaysFailHandler(Handler):
+    """This is a null protocol handler, it defines the behaviour of a
+    server which simply replies fail to every possible request. Used only for
+    debug and testing purpose.
+    """
+    def handle(self, message):
+        return grammar.Message(
+            message_type=grammar.REQUEST,
+            name=message.name,
+            code=grammar.OK,
+            arguments=message.arguments
+        )
+
+
+class AlwaysRaiseHandler(Handler):
+    """This is a null protocol handler, it defines the behaviour of a
+    server which simply replies with another request to every possible
+    request. Used only for debug and testing purpose.
+    """
+    def handle(self, message):
+        raise Exception("always raised exception")
 
 
 class DBProtocolHandler(Handler):
@@ -75,7 +99,7 @@ class DBProtocolHandler(Handler):
     """
 
     def __init__(self, backend):
-        super(DBProtocolHandler, self).__init__()
+        super().__init__()
         self.backend = backend
         self.commands = {
             "status"            : self.do_status,
@@ -92,38 +116,40 @@ class DBProtocolHandler(Handler):
             "set-section"       : self.do_set_section,
             "cal-on"            : self.do_cal_on,
             "set-filename"      : self.do_set_filename,
-            #new in version 1.2
+            # new in version 1.2
             "convert-data"      : self.do_convert_data,
-            #new in version 1.3
+            # new in version 1.3
             "set-enable"        : self.do_set_enable
-       }
+        }
 
     def handle(self, message):
         logger.info("HANDLE:")
-        reply = grammar.Message(message_type = grammar.REPLY,
-                                name = message.name)
-        if not self.commands.has_key(message.name):
-            raise HandlerException("invalid command '%s'" % (message.name,))
-        logger.debug("received command: %s" % (message.name,))
+        reply = grammar.Message(
+            message_type=grammar.REPLY,
+            name=message.name
+        )
+        if message.name not in self.commands:
+            raise HandlerException(f"invalid command '{message.name}'")
+        logger.debug("received command: %s", message.name)
         reply_arguments = self.commands[message.name](message.arguments)
         if reply_arguments:
-            reply.arguments = map(str, reply_arguments)
+            reply.arguments = list(map(str, reply_arguments))
         reply.code = grammar.OK
         return reply
 
-    def do_status(self, args):
+    def do_status(self, _):
         return self.backend.status()
 
-    def do_getTpi(self, args):
+    def do_getTpi(self, _):
         return self.backend.get_tpi()
 
-    def do_getTp0(self, args):
+    def do_getTp0(self, _):
         return self.backend.get_tp0()
 
-    def do_version(self, args):
-        return [PROTOCOL_VERSION]
+    def do_version(self, _):
+        return [__protocol_version__]
 
-    def do_get_configuration(self, args):
+    def do_get_configuration(self, _):
         return self.backend.get_configuration()
 
     def do_set_configuration(self, args):
@@ -131,7 +157,7 @@ class DBProtocolHandler(Handler):
             raise HandlerException("missing argument: configuration")
         return self.backend.set_configuration(str(args[0]))
 
-    def do_get_integration(self, args):
+    def do_get_integration(self, _):
         return self.backend.get_integration()
 
     def do_set_integration(self, args):
@@ -139,11 +165,13 @@ class DBProtocolHandler(Handler):
             raise HandlerException("missing argument: integration time")
         try:
             _integration = int(args[0])
-        except:
-            raise HandlerException("integration time must be an integer number")
+        except ValueError as ex:
+            raise HandlerException(
+                "integration time must be an integer number"
+            ) from ex
         return self.backend.set_integration(_integration)
 
-    def do_time(self, args):
+    def do_time(self, _):
         return self.backend.time()
 
     def do_start(self, args):
@@ -151,8 +179,8 @@ class DBProtocolHandler(Handler):
             return self.backend.start()
         try:
             timestamp = Time(int(args[0]), format="discos")
-        except:
-            raise HandlerException("wrong timestamp '%s'" % (args[0],))
+        except ValueError as ex:
+            raise HandlerException("wrong timestamp '{args[0]}'") from ex
         return self.backend.start(timestamp)
 
     def do_stop(self, args):
@@ -160,16 +188,15 @@ class DBProtocolHandler(Handler):
             return self.backend.stop()
         try:
             timestamp = Time(int(args[0]), format="discos")
-        except:
-            raise HandlerException("wrong timestamp '%s'" % (args[0],))
+        except ValueError as ex:
+            raise HandlerException("wrong timestamp '{args[0]}'") from ex
         return self.backend.stop(timestamp)
 
     def do_set_section(self, args):
         def _get_param(p, _type_converter=str):
             if p == "*":
                 return p
-            else:
-                return _type_converter(p)
+            return _type_converter(p)
 
         if len(args) < 7:
             raise HandlerException("set-section needs 7 arguments")
@@ -181,15 +208,17 @@ class DBProtocolHandler(Handler):
             mode = _get_param(args[4])
             sample_rate = _get_param(args[5], float)
             bins = _get_param(args[6], int)
-        except:
-            raise HandlerException("wrong parameter format")
-        return self.backend.set_section(section,
-                                        start_freq,
-                                        bandwidth,
-                                        feed,
-                                        mode,
-                                        sample_rate,
-                                        bins)
+        except ValueError as ex:
+            raise HandlerException("wrong parameter format") from ex
+        return self.backend.set_section(
+            section,
+            start_freq,
+            bandwidth,
+            feed,
+            mode,
+            sample_rate,
+            bins
+        )
 
     def do_cal_on(self, args):
         if len(args) < 1:
@@ -197,19 +226,22 @@ class DBProtocolHandler(Handler):
         else:
             try:
                 _interleave = int(args[0])
-            except:
-                raise HandlerException("interleave samples must be a positive int")
+            except ValueError as ex:
+                raise HandlerException(
+                    "interleave samples must be a positive int"
+                ) from ex
             if _interleave < 0:
-                raise HandlerException("interleave samples must be a positive int")
+                raise HandlerException(
+                    "interleave samples must be a positive int"
+                )
         return self.backend.cal_on(_interleave)
 
     def do_set_filename(self, args):
         if len(args) < 1:
             raise HandlerException("command needs <filename> as argument")
-        else:
-            return self.backend.set_filename(args[0])
+        return self.backend.set_filename(args[0])
 
-    def do_convert_data(self, args):
+    def do_convert_data(self, _):
         """
         Added in version 1.2
         """
@@ -224,7 +256,6 @@ class DBProtocolHandler(Handler):
         try:
             _feed1 = int(args[0])
             _feed2 = int(args[1])
-        except ValueError:
-            raise HandlerException("wrong parameter format")
+        except ValueError as ex:
+            raise HandlerException("wrong parameter format") from ex
         return self.backend.set_enable(_feed1, _feed2)
-

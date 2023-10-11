@@ -23,6 +23,7 @@ from decimal import Decimal
 from discosbackend import timediscos
 from astropy.time import Time
 
+
 class TestTimeDiscos(unittest.TestCase):
 
     def setUp(self):
@@ -40,6 +41,17 @@ class TestTimeDiscos(unittest.TestCase):
         self.assertAlmostEqual(self.now, dt.unix, places=6)
 
     def test_unix_parsing_function(self):
-        now = Decimal(self.now).to_eng_string() 
+        now = Decimal(self.now).to_eng_string()
         dt = timediscos.parse_unix_time(now)
         self.assertAlmostEqual(self.now, dt.unix, places=6)
+
+    def test_get_acs_now(self):
+        expected = self.now * timediscos.CENTINANOSECONDS
+        now = timediscos.get_acs_now()
+        self.assertAlmostEqual(
+            expected, now.unix * timediscos.CENTINANOSECONDS, delta=1000
+        )
+
+
+if __name__ == "__main__":
+    unittest.main()

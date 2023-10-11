@@ -1,7 +1,7 @@
 
 [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.34127.svg)](http://dx.doi.org/10.5281/zenodo.34127)
 [![astropy](http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat)](http://www.astropy.org/)
-[![Build Status](https://travis-ci.org/discos/discos-backend.svg?branch=master)](https://travis-ci.org/discos/discos-backend)
+[![Build Status](https://github.com/discos/discos-backend/workflows/CI%20Tests/badge.svg)](https://github.com/discos/discos-backend)
 
 # DISCOS BACKEND
 
@@ -20,14 +20,20 @@ good starting point for other implementations.
 
 ## Requirements
 
-  * **twisted** for the the server implemntation 
+  * **twisted** for the the server implementation 
   * **astropy** for time management
-  * **nose** **subprocess32** and **coverage** are used for test execution
+  * **coverage** and **prospector** are used for test execution
 
 Dependencies can be installed via pip:
 
 ```bash
   $ pip install -r requirements.txt
+```
+
+The same can be done for testing dependencies:
+
+```bash
+  $ pip install -r testing_requirements.txt
 ```
 
 # Using the package
@@ -40,7 +46,7 @@ behaviour by implementing your own class which redefines all the public
 methods (the one which do not start with _). 
 
 You can run the server using your protocol definitions, just like 
-the definition in **test/run_simulator_server.py**:
+the definition in **scripts/run_server.py**:
 
 ```python
 from discosbackend import server
@@ -49,8 +55,9 @@ from discosbackend.handlers import DBProtocolHandler
 from yourmodule import YourBackend
 
 tcp_port = 8978
-server.run_server(tcp_port,
-                  DBProtocolHandler(YourBackend()))
+server.run_server(
+    tcp_port, DBProtocolHandler(YourBackend())
+)
 ```
 
 ## Testing your implementation
@@ -69,8 +76,5 @@ The package tests can be run with the provided script **run_tests** .
   $./run_tests
 ```
 
-It will print to screen test results as expected while also generating xunit xml
-report in *test/results/report.xml* and a coverage html report in
-*test/coverage/index.html*.
-
-
+It will print to screen test results as expected while also generating a
+coverage html report in *htmlcov/index.html*.

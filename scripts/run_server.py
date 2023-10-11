@@ -1,5 +1,3 @@
-
-#
 #
 #   Copyright 2015 Marco Bartolini, bartolini@ira.inaf.it
 #
@@ -16,22 +14,16 @@
 #   limitations under the License.
 #
 
-import telnetlib
-import time
+import logging
+import sys
 
-from discosbackend import grammar
+from discosbackend import server
+from discosbackend.handlers import DBProtocolHandler
 
-class SimpleClient:
-    def __init__(self, port):
-        self.telnet_client = telnetlib.Telnet("localhost", port)
+from roach2_backend import Roach2_Backend  # pylint:disable=import-error
 
-    def send_message(self, message):
-        self.telnet_client.write(str(message) + '\r\n')
+logging.basicConfig(filename='example.log', level=logging.DEBUG)
 
-    def read_message(self):
-        recv = self.telnet_client.read_until('\r\n', 10)
-        return grammar.parse_message(recv)
-
-    def close(self):
-        self.telnet_client.close()
-
+server.run_server(
+    int(sys.argv[1]), DBProtocolHandler(Roach2_Backend())
+)
