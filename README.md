@@ -2,6 +2,7 @@
 [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.34127.svg)](http://dx.doi.org/10.5281/zenodo.34127)
 [![astropy](http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat)](http://www.astropy.org/)
 [![Build Status](https://github.com/discos/discos-backend/workflows/CI%20Tests/badge.svg)](https://github.com/discos/discos-backend)
+[![Coverage Status](https://codecov.io/gh/discos/discos-backend/branch/master/graph/badge.svg)](https://codecov.io/gh/discos/discos-backend)
 
 # DISCOS BACKEND
 
