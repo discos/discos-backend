@@ -1,0 +1,47 @@
+strictness: veryhigh
+
+test-warnings: true
+
+autodetect: false
+
+ignore-paths:
+  - build
+
+pylint:
+  disable:
+    - invalid-name
+    - too-many-branches
+    - broad-except
+    - broad-exception-raised
+    - too-many-instance-attributes
+    - too-many-public-methods
+    - attribute-defined-outside-init
+    - too-many-return-statements
+    - too-few-public-methods
+    - too-many-boolean-expressions
+    - too-many-locals
+    - wrong-import-position
+    - no-else-return
+    - too-many-nested-blocks
+    - too-many-statements
+    - too-many-arguments
+    - too-many-lines
+    - simplifiable-if-statement
+
+pycodestyle:
+  disable:
+    - W503
+    - W605
+    - E128
+    - E203
+    - E741
+    - E743
+    - N802
+    - N806
+
+mccabe:
+  disable:
+    - MC0001
+
+python-targets:
+  - 3

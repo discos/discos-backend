@@ -1,5 +1,3 @@
-
-#
 #
 #   Copyright 2015 Marco Bartolini, bartolini@ira.inaf.it
 #
@@ -17,26 +15,33 @@
 #
 
 import unittest
-from copy import copy
 
 from discosbackend import grammar
 
 
 class TestMessage(unittest.TestCase):
     def setUp(self):
-        self.request = grammar.Message(message_type = grammar.REQUEST,
-                                       name = "req")
-        self.reply = grammar.Message(message_type = grammar.REPLY,
-                                     name = "req",
-                                     code = grammar.OK)
-    
+        self.request = grammar.Message(
+            message_type=grammar.REQUEST,
+            name="req"
+        )
+        self.reply = grammar.Message(
+            message_type=grammar.REPLY,
+            name="req",
+            code=grammar.OK
+        )
+
     def test_is_request(self):
         self.assertTrue(self.request.is_request())
         self.assertFalse(self.reply.is_request())
 
     def test_is_correct_reply(self):
         self.assertTrue(self.reply.is_correct_reply(self.request))
-        
+
+    def test_empty_reply(self):
+        self.reply.name = "!"
+        self.assertFalse(self.reply.is_correct_reply(self.reply))
+
     def test_is_wrong_reply_name(self):
         self.reply.name = "wrongname"
         self.assertFalse(self.reply.is_correct_reply(self.request))
@@ -65,6 +70,10 @@ class TestParsing(unittest.TestCase):
     def test_good_request_pattern_without_arguments(self):
         match = grammar.request_pattern.match("?name")
         self.assertIsNotNone(match)
+
+    def test_empty_string(self):
+        with self.assertRaises(grammar.GrammarException):
+            grammar.parse_message("")
 
     def test_good_request_pattern_with_arguments(self):
         match = grammar.request_pattern.match("?name,arg1,arg2")
@@ -121,4 +130,6 @@ class TestParsing(unittest.TestCase):
         with self.assertRaises(grammar.GrammarException):
             grammar.parse_message("!reply,!invalid")
 
-        
+
+if __name__ == "__main__":
+    unittest.main()

@@ -1,7 +1,6 @@
 #!/bin/bash
 
 #
-#
 #   Copyright 2015 Marco Bartolini, bartolini@ira.inaf.it
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,4 +17,6 @@
 #
 
 
-nosetests -v --with-xunit --xunit-file=test/results/report.xml --with-coverage --cover-package=discosbackend --cover-erase --cover-html --cover-html-dir=test/coverage
+coverage run -p -m unittest discover -b tests
+coverage combine
+coverage html

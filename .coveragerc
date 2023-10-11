@@ -1,0 +1,7 @@
+[run]
+concurrency = thread, multiprocessing
+source = src
+
+[report]
+exclude_lines =
+    pragma: no cover
