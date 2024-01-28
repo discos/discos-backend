@@ -25,7 +25,7 @@ class SimpleClient:
 
     def send_message(self, message):
         self.telnet_client.write(
-            (str(message) + '\r\n').encode('raw_unicode_escape')
+            (str(message) + '\r\n').encode('latin-1')
         )
 
     def read_message(self):

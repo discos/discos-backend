@@ -36,7 +36,7 @@ class DBProtocol(LineOnlyReceiver):
 
     def lineReceived(self, line):
         logger.debug("received line: %s", line.decode())
-        line = line.decode("raw_unicode_escape")
+        line = line.decode("latin-1")
         try:
             message = grammar.parse_message(line)
             logger.debug("message successfully parsed")
@@ -48,7 +48,7 @@ class DBProtocol(LineOnlyReceiver):
                 code=grammar.INVALID,
                 arguments=["synthax error: {str(ge)}"]
             )
-            self.sendLine(str(reply_message).encode('raw_unicode_escape'))
+            self.sendLine(str(reply_message).encode('latin-1'))
             return
         if message.is_request():  # we only process requests
             try:
@@ -58,7 +58,7 @@ class DBProtocol(LineOnlyReceiver):
                     self._send_fail_reply(message)
                 else:
                     self.sendLine(
-                        str(reply_message).encode('raw_unicode_escape')
+                        str(reply_message).encode('latin-1')
                     )
             except HandlerException as he:
                 logger.exception(he)
@@ -80,7 +80,7 @@ class DBProtocol(LineOnlyReceiver):
             code=grammar.FAIL,
             arguments=[fail_message]
         )
-        self.sendLine(str(reply).encode("raw_unicode_escape"))
+        self.sendLine(str(reply).encode("latin-1"))
 
     def connectionMade(self):
         logger.debug("client connected")
@@ -90,7 +90,7 @@ class DBProtocol(LineOnlyReceiver):
             code=grammar.OK,
             arguments=[__protocol_version__]
         )
-        self.sendLine(str(connection_reply).encode("raw_unicode_escape"))
+        self.sendLine(str(connection_reply).encode("latin-1"))
 
     def connectionLost(self, reason=None):
         logger.debug("client disconnected: %s", str(reason))
