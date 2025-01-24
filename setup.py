@@ -20,7 +20,7 @@ from distutils.core import setup
 
 setup(
     name="discosbackend",
-    version="1.3",
+    version="1.4",
     author="Marco Bartolini",
     maintainer="Giuseppe Carboni",
     maintainer_email="giuseppe.carboni@inaf.it",

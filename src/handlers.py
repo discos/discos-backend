@@ -119,7 +119,11 @@ class DBProtocolHandler(Handler):
             # new in version 1.2
             "convert-data"      : self.do_convert_data,
             # new in version 1.3
-            "set-enable"        : self.do_set_enable
+            "set-enable"        : self.do_set_enable,
+            # new in version 1.4
+            "end-schedule"      : self.do_end_schedule,
+            "backend-park"      : self.do_park,
+            "set-shift"         : self.do_set_shift
         }
 
     def handle(self, message):
@@ -137,19 +141,29 @@ class DBProtocolHandler(Handler):
         reply.code = grammar.OK
         return reply
 
-    def do_status(self, _):
+    def do_status(self, args):
+        if len(args) != 0:
+            raise HandlerException("status needs no arguments")
         return self.backend.status()
 
-    def do_getTpi(self, _):
+    def do_getTpi(self, args):
+        if len(args) != 0:
+            raise HandlerException("get-tpi needs no arguments")
         return self.backend.get_tpi()
 
-    def do_getTp0(self, _):
+    def do_getTp0(self, args):
+        if len(args) != 0:
+            raise HandlerException("get-tp0 needs no arguments")
         return self.backend.get_tp0()
 
-    def do_version(self, _):
+    def do_version(self, args):
+        if len(args) != 0:
+            raise HandlerException("version needs no arguments")
         return [__protocol_version__]
 
-    def do_get_configuration(self, _):
+    def do_get_configuration(self, args):
+        if len(args) != 0:
+            raise HandlerException("get-configuration needs no arguments")
         return self.backend.get_configuration()
 
     def do_set_configuration(self, args):
@@ -157,7 +171,9 @@ class DBProtocolHandler(Handler):
             raise HandlerException("missing argument: configuration")
         return self.backend.set_configuration(str(args[0]))
 
-    def do_get_integration(self, _):
+    def do_get_integration(self, args):
+        if len(args) != 0:
+            raise HandlerException("get-integration needs no arguments")
         return self.backend.get_integration()
 
     def do_set_integration(self, args):
@@ -171,7 +187,9 @@ class DBProtocolHandler(Handler):
             ) from ex
         return self.backend.set_integration(_integration)
 
-    def do_time(self, _):
+    def do_time(self, args):
+        if len(args) != 0:
+            raise HandlerException("time needs no arguments")
         return self.backend.time()
 
     def do_start(self, args):
@@ -241,10 +259,12 @@ class DBProtocolHandler(Handler):
             raise HandlerException("command needs <filename> as argument")
         return self.backend.set_filename(args[0])
 
-    def do_convert_data(self, _):
+    def do_convert_data(self, args):
         """
         Added in version 1.2
         """
+        if len(args) != 0:
+            raise HandlerException("convert-data needs no arguments")
         return self.backend.convert_data()
 
     def do_set_enable(self, args):
@@ -259,3 +279,31 @@ class DBProtocolHandler(Handler):
         except ValueError as ex:
             raise HandlerException("wrong parameter format") from ex
         return self.backend.set_enable(_feed1, _feed2)
+
+    def do_end_schedule(self, args):
+        """
+        Added in version 1.4
+        """
+        if len(args) != 0:
+            raise HandlerException("end-schedule needs no arguments")
+        return self.backend.end_schedule()
+
+    def do_park(self, args):
+        """
+        Added in version 1.4
+        """
+        if len(args) != 0:
+            raise HandlerException("backend-park needs no arguments")
+        return self.backend.park()
+
+    def do_set_shift(self, args):
+        """
+        Added in version 1.4
+        """
+        if len(args) != 1:
+            raise HandlerException("set-shift needs 1 argument")
+        try:
+            _shift = int(args[0])
+        except ValueError as ex:
+            raise HandlerException("wrong parameter format") from ex
+        return self.backend.set_shift(_shift)

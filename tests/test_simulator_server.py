@@ -98,6 +98,16 @@ class TestSimulatorServer(unittest.TestCase):
             delta=0.5
         )
 
+    def test_time_command_with_args(self):
+        request = grammar.Message(
+            message_type=grammar.REQUEST,
+            name="time",
+            arguments=['dummy'],
+        )
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
+
     def test_status_command(self):
         request = grammar.Message(
             message_type=grammar.REQUEST,
@@ -114,6 +124,16 @@ class TestSimulatorServer(unittest.TestCase):
         self.assertEqual(reply.arguments[1], grammar.OK)
         self.assertEqual(reply.arguments[2], "0")
 
+    def test_status_command_with_args(self):
+        request = grammar.Message(
+            message_type=grammar.REQUEST,
+            name="status",
+            arguments=['dummy'],
+        )
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
+
     def test_version_command(self):
         request = grammar.Message(
             message_type=grammar.REQUEST,
@@ -124,6 +144,16 @@ class TestSimulatorServer(unittest.TestCase):
         self.assertEqual(reply.code, grammar.OK)
         self.assertEqual(reply.arguments[0], __protocol_version__)
 
+    def test_version_command_with_args(self):
+        request = grammar.Message(
+            message_type=grammar.REQUEST,
+            name="version",
+            arguments=['dummy'],
+        )
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
+
     def test_get_configuration_command(self):
         request = grammar.Message(
             message_type=grammar.REQUEST,
@@ -133,6 +163,16 @@ class TestSimulatorServer(unittest.TestCase):
         reply = self.client.read_message()
         self.assertEqual(reply.code, grammar.OK)
         self.assertEqual(reply.arguments[0], "unconfigured")
+
+    def test_get_configuration_command_with_args(self):
+        request = grammar.Message(
+            message_type=grammar.REQUEST,
+            name="get-configuration",
+            arguments=['dummy'],
+        )
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
 
     def test_set_configuration_command(self):
         conf_name = "testconfiguration"
@@ -172,6 +212,16 @@ class TestSimulatorServer(unittest.TestCase):
         reply = self.client.read_message()
         self.assertEqual(reply.code, grammar.OK)
         self.assertEqual(reply.arguments[0], "0")
+
+    def test_get_integration_command_with_args(self):
+        request = grammar.Message(
+            message_type=grammar.REQUEST,
+            name="get-integration",
+            arguments=['dummy'],
+        )
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
 
     def test_set_integration_command(self):
         integration = 10
@@ -224,6 +274,16 @@ class TestSimulatorServer(unittest.TestCase):
             self.assertGreaterEqual(tpi, 0)
             self.assertLessEqual(tpi, 100)
 
+    def test_get_tpi_command_with_args(self):
+        request = grammar.Message(
+            message_type=grammar.REQUEST,
+            name="get-tpi",
+            arguments=['dummy'],
+        )
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
+
     def test_get_tp0_command(self):
         request = grammar.Message(
             message_type=grammar.REQUEST,
@@ -234,6 +294,16 @@ class TestSimulatorServer(unittest.TestCase):
         self.assertEqual(reply.code, grammar.OK)
         for tpi in map(float, reply.arguments):
             self.assertEqual(tpi, 0)
+
+    def test_get_tp0_command_with_args(self):
+        request = grammar.Message(
+            message_type=grammar.REQUEST,
+            name="get-tp0",
+            arguments=['dummy'],
+        )
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
 
     def test_start_now_command(self):
         request = grammar.Message(
@@ -549,12 +619,88 @@ class TestSimulatorServer(unittest.TestCase):
     def test_convert_data_command(self):
         request = grammar.Message(
             message_type=grammar.REQUEST,
-            name="convert-data",
-            arguments=[]
+            name="convert-data"
         )
         self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.code, grammar.OK)
+
+    def test_convert_data_command_with_args(self):
+        request = grammar.Message(
+            message_type=grammar.REQUEST,
+            name="convert-data",
+            arguments=['dummy'],
+        )
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
+
+    def test_end_schedule_command(self):
+        request = grammar.Message(
+            message_type=grammar.REQUEST,
+            name="end-schedule"
+        )
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.OK)
+
+    def test_end_schedule_command_with_args(self):
+        request = grammar.Message(
+            message_type=grammar.REQUEST,
+            name="end-schedule",
+            arguments=['dummy']
+        )
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
+
+    def test_backend_park_command(self):
+        request = grammar.Message(
+            message_type=grammar.REQUEST,
+            name="backend-park"
+        )
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.OK)
+
+    def test_backend_park_command_with_args(self):
+        request = grammar.Message(
+            message_type=grammar.REQUEST,
+            name="backend-park",
+            arguments=['dummy']
+        )
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
+
+    def test_set_shift_command(self):
+        request = grammar.Message(
+            message_type=grammar.REQUEST,
+            name="set-shift",
+            arguments=['1']
+        )
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.OK)
+
+    def test_set_shift_command_without_args(self):
+        request = grammar.Message(
+            message_type=grammar.REQUEST,
+            name="set-shift"
+        )
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
+
+    def test_set_shift_command_wrong_parameter_type(self):
+        request = grammar.Message(
+            message_type=grammar.REQUEST,
+            name="set-shift",
+            arguments=['1.05']
+        )
+        self.client.send_message(request)
+        reply = self.client.read_message()
+        self.assertEqual(reply.code, grammar.FAIL)
 
 
 if __name__ == "__main__":
