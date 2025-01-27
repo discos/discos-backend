@@ -16,5 +16,5 @@
 #   limitations under the License.
 #
 
-__version__ = "1.3"
-__protocol_version__ = "1.3"
+__version__ = "1.4"
+__protocol_version__ = "1.4"

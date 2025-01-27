@@ -44,6 +44,7 @@ class BackendSimulator:
         self._filename = ""
         self.interleave = 0
         self.current_sections = range(0, self._max_sections)
+        self.shift = 0
 
     def status(self):
         return (
@@ -134,6 +135,15 @@ class BackendSimulator:
             feed2 * 2,
             feed2 * 2 + 1
         ]
+
+    def end_schedule(self):
+        pass
+
+    def park(self):
+        pass
+
+    def set_shift(self, shift):
+        self.shift = shift
 
     def _get_time(self):
         # should ask the backend hardware clock
