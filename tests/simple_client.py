@@ -14,23 +14,40 @@
 #   limitations under the License.
 #
 
-import telnetlib
+import socket
 
 from discosbackend import grammar
 
 
 class SimpleClient:
     def __init__(self, port):
-        self.telnet_client = telnetlib.Telnet("localhost", port)
+        self.client = None
+        self.port = port
+        self.timeout = 10
+
+    def _lazy_connection(self):
+        if self.client is None:
+            self.client = socket.create_connection(
+                ('localhost', self.port),
+                self.timeout
+            )
 
     def send_message(self, message):
-        self.telnet_client.write(
+        self._lazy_connection()
+        self.client.sendall(
             (str(message) + '\r\n').encode('latin-1')
         )
 
     def read_message(self):
-        recv = self.telnet_client.read_until(b'\r\n', 10)
-        return grammar.parse_message(recv.decode())
+        self._lazy_connection()
+        recv = b''
+        while True:
+            chunk = self.client.recv(1)
+            recv += chunk
+            if recv.endswith(b'\r\n'):
+                return grammar.parse_message(recv.decode())
 
     def close(self):
-        self.telnet_client.close()
+        if self.client:
+            self.client.close()
+            self.client = None
