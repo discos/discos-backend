@@ -354,7 +354,8 @@ class TestSimulatorServer(unittest.TestCase):
         self.assertEqual(reply.code, grammar.FAIL)
 
     def test_start_at_command(self):
-        delay = 10
+        delay = 0.1
+        guard_delay = 0.01
         request = grammar.Message(
             message_type=grammar.REQUEST,
             name="start",
@@ -370,7 +371,7 @@ class TestSimulatorServer(unittest.TestCase):
         self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.arguments[2], "0")
-        time.sleep(delay)
+        time.sleep(delay+guard_delay)
         self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.arguments[2], "1")
@@ -386,7 +387,8 @@ class TestSimulatorServer(unittest.TestCase):
         self.assertEqual(reply.code, grammar.FAIL)
 
     def test_stop_at_command(self):
-        delay = 5
+        delay = 0.1
+        guard_delay = 0.01
         request = grammar.Message(
             message_type=grammar.REQUEST,
             name="start"
@@ -409,7 +411,7 @@ class TestSimulatorServer(unittest.TestCase):
         self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.arguments[2], "1")
-        time.sleep(delay)
+        time.sleep(delay+guard_delay)
         self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.arguments[2], "0")
@@ -425,8 +427,9 @@ class TestSimulatorServer(unittest.TestCase):
         self.assertEqual(reply.code, grammar.FAIL)
 
     def test_start_and_stop_at_command(self):
-        start_delay = 5
-        stop_delay = 10
+        start_delay = 0.1
+        stop_delay = 0.2
+        guard_delay = 0.01
         request = grammar.Message(
             message_type=grammar.REQUEST,
             name="start",
@@ -450,11 +453,11 @@ class TestSimulatorServer(unittest.TestCase):
         self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.arguments[2], "0")
-        time.sleep(start_delay)
+        time.sleep(start_delay+guard_delay)
         self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.arguments[2], "1")
-        time.sleep(stop_delay - start_delay)
+        time.sleep(stop_delay - start_delay + guard_delay)
         self.client.send_message(request)
         reply = self.client.read_message()
         self.assertEqual(reply.arguments[2], "0")
