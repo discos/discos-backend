@@ -354,7 +354,7 @@ class TestSimulatorServer(unittest.TestCase):
         self.assertEqual(reply.code, grammar.FAIL)
 
     def test_start_at_command(self):
-        delay = 5
+        delay = 10
         request = grammar.Message(
             message_type=grammar.REQUEST,
             name="start",
